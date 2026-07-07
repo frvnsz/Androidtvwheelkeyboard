@@ -231,7 +231,7 @@ app/
       service/
         WheelKeyboardService.kt     // InputMethodService: lifecycle, onKeyDown/onKeyUp, InputConnection calls
       view/
-        WheelKeyboardView.kt        // Custom Canvas View: renders the ring/strip, owns wheelIndex + acceleration state
+        WheelKeyboardView.kt        // Custom Canvas View: renders the circular ring, owns wheelIndex + acceleration state
       model/
         WheelKeyboardItem.kt        // sealed class: Letter, Digit, Space, Delete, Search, VoiceSearch, Done, ClearText
         WheelRotationState.kt       // speed-tier timing state only — the text itself always lives in the host app's field
@@ -498,7 +498,7 @@ Two details baked into these files deliberately, worth not "fixing" back to olde
 ## 13. Open Decisions to Resolve Before Coding
 
 - **Insert vs. overwrite at the cursor on OK** (§5.1) — pick one deliberately, don't let it fall out by accident.
-- **Ring rendering:** a literal full circle (most items off-screen/faded, a small visible window near the "top" position) versus a horizontally- or vertically-scrolling strip that behaves like an infinite loop conceptually. A true full-circle layout is cramped on a TV screen; a windowed strip showing roughly 7–9 items centered on the current selection, faded at the edges, is the more practical answer while still satisfying "wraps infinitely."
+- **Ring rendering:** the keyboard shape is a circular ring, not a horizontal or vertical strip. Keep the ring-based layout as a fixed requirement throughout implementation.
 - **Whether the keyboard renders its own text/cursor preview at all.** The host app's own field already shows the live text and usually its own cursor caret — the wheel surface may only need to render the ring itself, not a duplicate text display. Decide based on visual-polish priorities, not because either option is technically required.
 - **Back button behavior:** the default `InputMethodService` handling already hides the keyboard on Back — decide whether to keep that as-is, or add a wheel-specific first step (e.g., Back cancels an in-progress voice search before falling through to the default hide behavior).
 - **Rotation acceleration tiers, overshoot handling, haptic/audio feedback, and number-key fast-travel** all need concrete timing/threshold values chosen through actual hands-on testing with a real remote rather than guessed in the abstract — the ranges in §7 are a reasonable starting point, not final numbers.
