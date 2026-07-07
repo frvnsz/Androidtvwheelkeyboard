@@ -2,6 +2,7 @@ package com.example.wheelkeyboard.service
 
 import android.os.Handler
 import android.os.Looper
+import android.text.InputType
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -31,10 +32,22 @@ class WheelKeyboardService : InputMethodService() {
 
     override fun onCreateInputView(): View = WheelKeyboardView(this).also { wheelView = it }
 
+    override fun onStartInput(info: EditorInfo?, restarting: Boolean) {
+        super.onStartInput(info, restarting)
+        editorInfo = info
+        if (!isKeyboardInput(info)) {
+            stopRotation()
+        }
+    }
+
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         editorInfo = info
-        wheelView?.requestFocus()
+        if (isKeyboardInput(info)) {
+            wheelView?.requestFocus()
+        } else {
+            stopRotation()
+        }
     }
 
     override fun onFinishInput() {
@@ -51,7 +64,12 @@ class WheelKeyboardService : InputMethodService() {
 
     override fun onEvaluateFullscreenMode(): Boolean = false
 
+    override fun onEvaluateInputViewShown(): Boolean = isKeyboardInput(editorInfo ?: currentInputEditorInfo)
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (!shouldHandleRemoteInput()) {
+            return false
+        }
         WheelRotationState.directionFor(keyCode)?.let { direction ->
             startOrReverseRotation(direction)
             return true
@@ -65,6 +83,9 @@ class WheelKeyboardService : InputMethodService() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (!shouldHandleRemoteInput()) {
+            return false
+        }
         if (WheelRotationState.directionFor(keyCode) != null) {
             stopRotation()
             return true
@@ -75,6 +96,20 @@ class WheelKeyboardService : InputMethodService() {
             KeyEvent.KEYCODE_DPAD_CENTER,
             KeyEvent.KEYCODE_ENTER -> true
             else -> super.onKeyUp(keyCode, event)
+        }
+    }
+
+    private fun shouldHandleRemoteInput(): Boolean =
+        isInputViewShown && currentInputConnection != null && isKeyboardInput(editorInfo ?: currentInputEditorInfo)
+
+    private fun isKeyboardInput(info: EditorInfo?): Boolean {
+        val inputType = info?.inputType ?: return false
+        return when (inputType and InputType.TYPE_MASK_CLASS) {
+            InputType.TYPE_CLASS_TEXT,
+            InputType.TYPE_CLASS_NUMBER,
+            InputType.TYPE_CLASS_PHONE,
+            InputType.TYPE_CLASS_DATETIME -> true
+            else -> false
         }
     }
 
