@@ -7,4 +7,7 @@
     <string name="enable_keyboard">1. Enable keyboard</string>
     <string name="choose_keyboard">2. Choose keyboard</string>
     <string name="voice_permission">Grant microphone permission for Voice Search</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_body">Version %1$s is available. You are running %2$s.</string>
+    <string name="update_install">Open update</string>
 </resources>

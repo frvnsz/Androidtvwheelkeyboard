@@ -11,8 +11,10 @@ android {
         applicationId = "com.example.wheelkeyboard"
         minSdk = 23
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
+        versionName = System.getenv("VERSION_NAME") ?: "1.0"
+        buildConfigField("String", "UPDATE_CHECK_URL", "\"${System.getenv("UPDATE_CHECK_URL") ?: ""}\"")
+        buildConfigField("String", "UPDATE_APK_URL", "\"${System.getenv("UPDATE_APK_URL") ?: ""}\"")
     }
 
     signingConfigs {
@@ -22,6 +24,10 @@ android {
             keyAlias = System.getenv("SIGNING_KEY_ALIAS")
             keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
