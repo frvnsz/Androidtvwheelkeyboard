@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.HapticFeedbackConstants
+import android.view.SoundEffectConstants
 import android.view.View
 import com.example.wheelkeyboard.model.WheelKeyboardItem
 import kotlin.math.cos
@@ -35,6 +37,8 @@ class WheelKeyboardView @JvmOverloads constructor(
 
     fun rotate(direction: Int) {
         setWheelIndex((wheelIndex + direction).floorMod(items.size))
+        playSoundEffect(SoundEffectConstants.CLICK)
+        performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
     }
 
     fun setWheelIndex(index: Int) {
