@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TV Wheel Keyboard</string>
+    <string name="keyboard_label">TV Wheel Keyboard</string>
+    <string name="subtype_label">English (US)</string>
+    <string name="setup_title">TV Wheel Keyboard</string>
+    <string name="setup_body">Enable the keyboard in Android settings, then choose it as your current input method.</string>
+    <string name="enable_keyboard">1. Enable keyboard</string>
+    <string name="choose_keyboard">2. Choose keyboard</string>
+    <string name="voice_permission">Grant microphone permission for Voice Search</string>
+</resources>
