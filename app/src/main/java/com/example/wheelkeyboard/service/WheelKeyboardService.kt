@@ -132,11 +132,13 @@ class WheelKeyboardService : InputMethodService() {
         when (val item = wheelView?.selectedItem()) {
             is WheelKeyboardItem.Letter -> ic.commitText(item.value.toString(), 1)
             is WheelKeyboardItem.Digit -> ic.commitText(item.value.toString(), 1)
+            is WheelKeyboardItem.Punctuation -> ic.commitText(item.value.toString(), 1)
             WheelKeyboardItem.Space -> ic.commitText(" ", 1)
             WheelKeyboardItem.Delete -> ic.deleteSurroundingText(1, 0)
             WheelKeyboardItem.Search, WheelKeyboardItem.Done -> performCurrentEditorAction(ic)
             WheelKeyboardItem.VoiceSearch -> voiceInput.start()
             WheelKeyboardItem.ClearText -> ic.deleteSurroundingText(Int.MAX_VALUE, Int.MAX_VALUE)
+            WheelKeyboardItem.ToggleSymbols, WheelKeyboardItem.ToggleLetters -> wheelView?.toggleMode()
             null -> Unit
         }
     }
@@ -160,6 +162,6 @@ class WheelKeyboardService : InputMethodService() {
     private fun syncWheelToCursor(ic: InputConnection, delta: Int) {
         val adjacent = if (delta <= 0) ic.getTextBeforeCursor(1, 0) else ic.getTextAfterCursor(1, 0)
         val char = adjacent?.firstOrNull() ?: return
-        WheelKeyboardItem.indexOfCharacter(char)?.let { wheelView?.setWheelIndex(it) }
+        wheelView?.setModeForCharacter(char)
     }
 }
